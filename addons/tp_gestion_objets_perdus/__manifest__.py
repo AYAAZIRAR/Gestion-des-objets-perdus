@@ -1,7 +1,7 @@
 {
     "name": "TP - Gestion des Objets Perdus",
     "version": "2.10.0",
-    "summary": "Module de Gestion des Objets Perdus et Trouvés",
+    "summary": "Module de Gestion des Objets Perdus",
     "category": "Training",
     "author": "EMSI",
     "depends": ["base", "mail"],
