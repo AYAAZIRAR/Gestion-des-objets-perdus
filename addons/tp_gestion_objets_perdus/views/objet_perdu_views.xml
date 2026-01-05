@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- View Form -->
+  
     <record id="view_tp_objet_form" model="ir.ui.view">
         <field name="name">tp.objet.form</field>
         <field name="model">tp.objet</field>
