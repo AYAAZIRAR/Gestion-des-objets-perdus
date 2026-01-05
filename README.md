@@ -5,7 +5,7 @@ Ce projet consiste le développement d’un module Odoo pour la gestion des obje
 
 ##  Contenu du dépôt
 - Code source du module Odoo
-- [📄 Ouvrir le rapport du projet](./AYA_Azirar.pdf)
+- [📄le rapport du projet](https://github.com/AYAAZIRAR/Gestion-des-objets-perdus/releases/download/v1.0/AYA_Azirar.pdf)
 - README.md
 
 ## 🛠️ Fonctionnalités
