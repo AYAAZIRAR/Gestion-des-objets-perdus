@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View Form -->
+    <record id="view_tp_objet_form" model="ir.ui.view">
+        <field name="name">tp.objet.form</field>
+        <field name="model">tp.objet</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Objet Perdu/Trouvé">
+                <header>
+                    <button name="action_start_progress" string="Mettre en cours" type="object" 
+                            class="oe_highlight" invisible="statut != 'declared'"/>
+                    <button name="action_return" string="Restituer" type="object" 
+                            class="oe_highlight" invisible="statut != 'in_progress'"/>
+                    <button name="action_back_to_declared" string="Remettre en Déclaré" type="object" 
+                            invisible="statut != 'in_progress'"/>
+                    <button name="unlink" string="Supprimer" type="object" 
+                            class="btn-danger" icon="fa-trash"
+                            confirm="Êtes-vous sûr de vouloir supprimer cet objet définitivement ?"/>
+                    <field name="statut" widget="statusbar" statusbar_visible="declared,in_progress,returned"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_matches" type="object" class="oe_stat_button" icon="fa-exchange">
+                            <field name="match_count" string="Matchs" widget="statinfo"/>
+                        </button>
+                    </div>
+
+
+                    <field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image'}" style="float: right;"/>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1 style="font-size: 2.5rem; color: #2c3e50; font-weight: 300;">
+                            <field name="name" placeholder="Ex: Téléphone portable..."/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Informations de l'objet">
+                            <field name="item_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="category_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="location" placeholder="Ex: EMSI, Bibliothèque..."/>
+                            <field name="declaration_date"/>
+                        </group>
+                        <group string="Contact &amp; Responsable">
+                            <field name="partner_id"/>
+                            <field name="contact_email"/>
+                            <field name="contact_phone"/>
+                            <field name="responsable" readonly="1"/>
+                            <field name="days_since_declaration" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page name="description" string="Description">
+                            <field name="description" placeholder="Ajoutez une description détaillée ici..."/>
+                        </page>
+                        <page name="restitution" string="Restitution" invisible="statut != 'returned'">
+                            <group>
+                                <field name="return_date" readonly="1"/>
+                                <field name="returned_to" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- View Tree -->
+    <record id="view_tp_objet_tree" model="ir.ui.view">
+        <field name="name">tp.objet.tree</field>
+        <field name="model">tp.objet</field>
+        <field name="arch" type="xml">
+            <tree string="Objets Perdus &amp; Trouvés" decoration-muted="statut == 'returned'" decoration-info="statut == 'in_progress'" decoration-danger="item_type == 'lost' and statut != 'returned'">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="location"/>
+                <field name="declaration_date"/>
+                <field name="item_type" widget="badge" decoration-warning="item_type == 'lost'" decoration-success="item_type == 'found'"/>
+                <field name="statut" widget="badge" decoration-info="statut == 'declared'" decoration-warning="statut == 'in_progress'" decoration-success="statut == 'returned'"/>
+                <button name="unlink" type="object" icon="fa-trash" class="text-danger" 
+                        title="Supprimer" confirm="Voulez-vous vraiment supprimer cet objet définitivenent ?"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Kanban View - Redesigned for Odoo 17 Modern Style -->
+    <record id="view_tp_objet_kanban" model="ir.ui.view">
+        <field name="name">tp.objet.kanban</field>
+        <field name="model">tp.objet</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="statut" class="o_kanban_small_column" records_draggable="true">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="item_type"/>
+                <field name="statut"/>
+                <field name="declaration_date"/>
+                <field name="location"/>
+                <field name="category_id"/>
+                <field name="image"/>
+                <field name="days_since_declaration"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click" style="border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 15px; background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: all 0.3s ease; overflow: hidden;">
+                            <style>
+                                .oe_kanban_global_click:hover {
+                                    transform: translateY(-5px);
+                                    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+                                    border-color: #cbd5e0;
+                                }
+                                .badge-type-lost { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; }
+                                .badge-type-found { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.7rem; }
+                            </style>
+                            <div class="d-flex h-100">
+                                <!-- Image Column -->
+                                <div class="o_kanban_image" style="width: 110px; height: 110px; padding: 8px;">
+                                    <div t-if="record.image.raw_value" style="width: 100%; height: 100%; overflow: hidden; border-radius: 10px;">
+                                        <img t-att-src="kanban_image('tp.objet', 'image', record.id.raw_value)" 
+                                             alt="Object" style="width: 100%; height: 100%; object-fit: cover;"/>
+                                    </div>
+                                    <div t-else="" style="width: 100%; height: 100%; background: #f1f5f9; border-radius: 10px; color: #94a3b8; line-height: 94px; text-align: center; font-size: 2.2rem;">
+                                        📦
+                                    </div>
+                                </div>
+                                <!-- Content Column -->
+                                <div class="flex-grow-1 p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <strong class="o_kanban_record_title" style="font-size: 1.1rem; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">
+                                            <field name="name"/>
+                                        </strong>
+                                        <span t-attf-class="badge-type-#{record.item_type.raw_value}">
+                                            <t t-if="record.item_type.raw_value == 'lost'">PERDU</t>
+                                            <t t-else="">TROUVÉ</t>
+                                        </span>
+                                        <button name="unlink" type="object" 
+                                                class="btn btn-link text-danger p-0 ms-2" 
+                                                confirm="Supprimer cet objet ?">
+                                            <i class="fa fa-trash"/>
+                                        </button>
+                                    </div>
+                                    <div class="text-muted small mb-3">
+                                        <i class="fa fa-tag mr-1"/> <field name="category_id"/>
+                                    </div>
+                                    <div class="row g-0 text-muted small" style="font-size: 0.85rem;">
+                                        <div class="col-12 mb-1">
+                                            <span class="d-flex align-items-center">
+                                                <i class="fa fa-map-marker mr-2 text-primary" style="width: 14px;"/> 
+                                                <field name="location"/>
+                                            </span>
+                                        </div>
+                                        <div class="col-12 mb-1">
+                                            <span class="d-flex align-items-center">
+                                                <i class="fa fa-calendar mr-2 text-info" style="width: 14px;"/> 
+                                                <field name="declaration_date"/>
+                                            </span>
+                                        </div>
+                                        <div class="col-12">
+                                            <span class="d-flex align-items-center">
+                                                <i class="fa fa-clock-o mr-2 text-warning" style="width: 14px;"/> 
+                                                <field name="days_since_declaration"/> jour(s)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- View Search -->
+    <record id="view_tp_objet_search" model="ir.ui.view">
+        <field name="name">tp.objet.search</field>
+        <field name="model">tp.objet</field>
+        <field name="arch" type="xml">
+            <search string="Recherche Objets">
+                <field name="name" string="Nom ou Catégorie" filter_domain="['|', ('name', 'ilike', self), ('category_id', 'ilike', self)]"/>
+                <field name="category_id"/>
+                <field name="location"/>
+                
+                <separator/>
+                <filter string="Perdus" name="lost" domain="[('item_type', '=', 'lost')]"/>
+                <filter string="Trouvés" name="found" domain="[('item_type', '=', 'found')]"/>
+                <separator/>
+                <filter string="Déclarés" name="declared" domain="[('statut', '=', 'declared')]"/>
+                <filter string="En cours" name="in_progress" domain="[('statut', '=', 'in_progress')]"/>
+                <filter string="Restitués" name="returned" domain="[('statut', '=', 'returned')]"/>
+                
+                <group expand="0" string="Regrouper par">
+                    <filter string="Catégorie" name="group_by_category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Statut" name="group_by_statut" context="{'group_by': 'statut'}"/>
+                    <filter string="Type" name="group_by_type" context="{'group_by': 'item_type'}"/>
+                    <filter string="Date de déclaration" name="group_by_date" context="{'group_by': 'declaration_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_tp_objet_view" model="ir.actions.act_window">
+        <field name="name">Tous les objets</field>
+        <field name="res_model">tp.objet</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Déclarez votre premier objet perdu ou trouvé !
+            </p>
+        </field>
+    </record>
+
+    <record id="action_tp_lost_items" model="ir.actions.act_window">
+        <field name="name">Objets Perdus</field>
+        <field name="res_model">tp.objet</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('item_type', '=', 'lost')]</field>
+    </record>
+
+    <record id="action_tp_found_items" model="ir.actions.act_window">
+        <field name="name">Objets Trouvés</field>
+        <field name="res_model">tp.objet</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('item_type', '=', 'found')]</field>
+    </record>
+
+
+    <!-- Menus -->
+    <menuitem id="menu_tp_objet_main" 
+              name="Objets Perdus &amp; Trouvés" 
+              sequence="1" 
+              web_icon="base,static/description/icon.png"/>
+              
+    <menuitem id="menu_tp_objet_all" name="Tous les objets" parent="menu_tp_objet_main" action="action_tp_objet_view" sequence="10"/>
+    <menuitem id="menu_tp_objet_lost" name="Objets Perdus" parent="menu_tp_objet_main" action="action_tp_lost_items" sequence="20"/>
+    <menuitem id="menu_tp_objet_found" name="Objets Trouvés" parent="menu_tp_objet_main" action="action_tp_found_items" sequence="30"/>
+</odoo>

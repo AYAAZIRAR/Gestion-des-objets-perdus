@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tp_objet,tp.objet,model_tp_objet,base.group_user,1,1,1,1
+access_tp_objet_category,tp.objet.category,model_tp_objet_category,base.group_user,1,1,1,1
+access_tp_objet_dashboard,tp.objet.dashboard,model_tp_objet_dashboard,base.group_user,1,1,1,1
+access_tp_objet_return_wizard,tp.objet.return.wizard,model_tp_objet_return_wizard,base.group_user,1,1,1,1

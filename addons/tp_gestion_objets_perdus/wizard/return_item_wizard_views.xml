@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_tp_objet_return_wizard_form" model="ir.ui.view">
+        <field name="name">tp.objet.return.wizard.form</field>
+        <field name="model">tp.objet.return.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Restituer l'objet">
+                <group>
+                    <field name="objet_id" readonly="1"/>
+                    <field name="return_date"/>
+                    <field name="returned_to"/>
+                </group>
+                <footer>
+                    <button name="action_confirm_return" string="Confirmer" type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_tp_return_wizard" model="ir.actions.act_window">
+        <field name="name">Restituer</field>
+        <field name="res_model">tp.objet.return.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

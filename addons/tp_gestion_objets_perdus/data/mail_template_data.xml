@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Email Template for Match Found -->
+        <record id="email_template_match_found" model="mail.template">
+            <field name="name">Objet Match: Notification de l'objet trouvé</field>
+            <field name="model_id" ref="tp_gestion_objets_perdus.model_tp_objet"/>
+            <field name="subject">Bonne nouvelle ! Un objet correspondant à votre déclaration a été trouvé</field>
+            <field name="email_from">{{ object.responsable or 'gestion_objets@emsi.ma' }}</field>
+            <field name="email_to">{{ object.contact_email }}</field>
+            <field name="description">Envoyé au propriétaire lorsqu'un objet correspondant est trouvé</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Bonjour <t t-out="object.partner_id.name or ''"/>,
+                        <br/><br/>
+                        Nous avons le plaisir de vous informer qu'un objet correspondant à votre déclaration 
+                        <strong><t t-out="object.name"/></strong> (Catégorie: <t t-out="object.category_id.name"/>) 
+                        a été trouvé à <strong><t t-out="object.location"/></strong>.
+                        <br/><br/>
+                        Vous pouvez venir le récupérer auprès de notre service des objets trouvés.
+                        <br/><br/>
+                        Cordialement,<br/>
+                        L'équipe Gestion des Objets
+                    </p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Email Template for Restitution -->
+        <record id="email_template_restitution_success" model="mail.template">
+            <field name="name">Objet Restitué: Confirmation</field>
+            <field name="model_id" ref="tp_gestion_objets_perdus.model_tp_objet"/>
+            <field name="subject">Confirmation de la restitution de votre objet : {{ object.name }}</field>
+            <field name="email_from">{{ object.responsable or 'gestion_objets@emsi.ma' }}</field>
+            <field name="email_to">{{ object.contact_email }}</field>
+            <field name="description">Envoyé au propriétaire lorsque l'objet lui est restitué</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Bonjour <t t-out="object.partner_id.name or ''"/>,
+                        <br/><br/>
+                        Nous vous confirmons que votre objet <strong><t t-out="object.name"/></strong> 
+                        vous a été restitué le <t t-out="object.return_date"/>.
+                        <br/><br/>
+                        Merci d'avoir fait confiance à notre service.
+                        <br/><br/>
+                        Cordialement,<br/>
+                        L'équipe Gestion des Objets
+                    </p>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

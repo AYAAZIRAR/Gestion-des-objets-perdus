@@ -1,0 +1,5 @@
+/* CSS Shell to fix compilation error */
+.kpi_card:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}

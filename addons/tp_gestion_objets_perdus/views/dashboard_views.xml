@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_tp_objet_dashboard_form" model="ir.ui.view">
+        <field name="name">tp.objet.dashboard.form</field>
+        <field name="model">tp.objet.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard" create="false" edit="false">
+                <sheet>
+                    <style>
+                        .o_dashboard_main {
+                            background: #f4f7f6;
+                            padding: 20px;
+                            font-family: 'Inter', sans-serif;
+                        }
+                        .dashboard_header {
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            padding: 40px;
+                            border-radius: 20px;
+                            color: white;
+                            text-align: center;
+                            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                            margin-bottom: 40px;
+                        }
+                        .kpi_card_btn {
+                            transition: transform 0.3s ease;
+                        }
+                        .kpi_card_btn:hover {
+                            transform: translateY(-10px);
+                        }
+                        .kpi_card {
+                            background: rgba(255, 255, 255, 0.9);
+                            backdrop-filter: blur(10px);
+                            border: 1px solid rgba(255, 255, 255, 0.3);
+                            border-radius: 20px;
+                            padding: 30px;
+                            display: flex;
+                            align-items: center;
+                            gap: 20px;
+                            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+                        }
+                        .kpi_icon {
+                            font-size: 2.22rem;
+                            background: rgba(255, 255, 255, 0.8);
+                            width: 65px;
+                            height: 65px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 16px;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                        }
+                        .kpi_value {
+                            font-size: 2.5rem;
+                            font-weight: 700;
+                            color: #2D3748;
+                        }
+                        .kpi_label {
+                            font-size: 1.1rem;
+                            color: #718096;
+                            text-transform: uppercase;
+                            letter-spacing: 1px;
+                        }
+                    </style>
+                    <div class="o_dashboard_main">
+                        <div class="dashboard_header">
+                            <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 10px;">
+                                Tableau de Bord
+                            </h1>
+                            <p style="font-size: 1.2rem; opacity: 0.9;">Voici un aperçu de l'état actuel des objets dans votre centre.</p>
+                        </div>
+                        
+                        <div class="kpi_section d-flex justify-content-between gap-4">
+                            <button name="action_view_all" type="object" class="kpi_card_btn flex-fill p-0 border-0 bg-transparent">
+                                <div class="kpi_card" style="border-bottom: 5px solid #667eea;">
+                                    <div class="kpi_icon" style="background: #ebf4ff; color: #3182ce;">📦</div>
+                                    <div>
+                                        <div class="kpi_value"><field name="total_objets" readonly="1"/></div>
+                                        <div class="kpi_label">Total Objets</div>
+                                    </div>
+                                </div>
+                            </button>
+                            
+                            <button name="action_view_lost" type="object" class="kpi_card_btn flex-fill p-0 border-0 bg-transparent">
+                                <div class="kpi_card" style="border-bottom: 5px solid #f56565;">
+                                    <div class="kpi_icon" style="background: #fff5f5; color: #e53e3e;">🔍</div>
+                                    <div>
+                                        <div class="kpi_value"><field name="objets_perdus" readonly="1"/></div>
+                                        <div class="kpi_label">Objet Perdus</div>
+                                    </div>
+                                </div>
+                            </button>
+                            
+                             <button name="action_view_found" type="object" class="kpi_card_btn flex-fill p-0 border-0 bg-transparent">
+                                <div class="kpi_card" style="border-bottom: 5px solid #48bb78;">
+                                    <div class="kpi_icon" style="background: #f0fff4; color: #38a169;">✨</div>
+                                    <div>
+                                        <div class="kpi_value"><field name="objets_trouves" readonly="1"/></div>
+                                        <div class="kpi_label">Objet Trouvés</div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <div class="kpi_card_btn flex-fill p-0 border-0 bg-transparent">
+                                <div class="kpi_card" style="border-bottom: 5px solid #ecc94b; background: linear-gradient(135deg, #ffffff 0%, #fefcbf 100%);">
+                                    <div class="kpi_icon" style="background: #fffff0; color: #b7791f;">🏆</div>
+                                    <div>
+                                        <div class="kpi_value"><field name="restitution_rate" widget="percentage" readonly="1"/></div>
+                                        <div class="kpi_label">Taux Succès</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_tp_objet_dashboard_server" model="ir.actions.server">
+        <field name="name">Tableau de Bord</field>
+        <field name="model_id" ref="model_tp_objet_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">
+dashboard = env['tp.objet.dashboard'].create({})
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Tableau de Bord',
+    'res_model': 'tp.objet.dashboard',
+    'res_id': dashboard.id,
+    'view_mode': 'form',
+    'target': 'current',
+}
+        </field>
+    </record>
+
+    <!-- Category Action -->
+    <record id="action_tp_objet_category" model="ir.actions.act_window">
+        <field name="name">Catégories</field>
+        <field name="res_model">tp.objet.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <!-- Menus Evolution -->
+    <menuitem id="menu_tp_objet_dashboard" name="📊 Tableau de Bord" parent="menu_tp_objet_main" action="action_tp_objet_dashboard_server" sequence="1"/>
+    
+    <menuitem id="menu_tp_objet_config" name="Configuration" parent="menu_tp_objet_main" sequence="100"/>
+    <menuitem id="menu_tp_objet_category" name="Catégories" parent="menu_tp_objet_config" action="action_tp_objet_category" sequence="10"/>
+
+</odoo>
